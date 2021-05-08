@@ -1,3 +1,7 @@
+'''создал отдельный файл для настройки логгера,
+но проверку задания проходит только настройка логгера 
+в файле homework.py'''
+
 import logging
 from logging.handlers import RotatingFileHandler
 

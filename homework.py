@@ -1,11 +1,11 @@
+import logging
 import os
 import time
+from logging.handlers import RotatingFileHandler
 
 import requests
 import telegram
 from dotenv import load_dotenv
-
-from logs import logger
 
 load_dotenv()
 
@@ -15,6 +15,20 @@ TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
 CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
 HOMEWORK_URL = 'https://praktikum.yandex.ru/api/user_api/homework_statuses/'
 bot_client = telegram.Bot(token=TELEGRAM_TOKEN)
+
+logging.basicConfig(
+    level=logging.DEBUG,
+    filename='ya_hw_bot.log',
+    filemode='a',
+    format='%(asctime)s, %(levelname)s, %(message)s, %(name)s',
+)
+
+# настройка логгера 1
+logger = logging.getLogger()
+logging.getLogger('urlib3').setLevel(logging.WARNING)
+logging.getLogger('telegram').setLevel(logging.WARNING)
+handler = RotatingFileHandler('ya_hw_bot.log', maxBytes=2000000, backupCount=5)
+logger.addHandler(handler)
 
 
 def parse_homework_status(homework):
