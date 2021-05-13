@@ -85,6 +85,7 @@ def get_homework_statuses(current_timestamp):
         for key in json_error_codes:
             if key in data:
                 raise ValueError(SERVER_ERROR_MESSAGE)
+                logger.error(f'{exception_text}', exc_info=True)
         return data
 
 
