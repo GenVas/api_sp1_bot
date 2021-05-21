@@ -25,7 +25,7 @@ handler.setLevel(logging.INFO)
 logger.addHandler(handler)
 
 START_MESSAGE = 'Запуск программы'
-VERDICTS_DICT = {
+VERDICTS = {
     'rejected': 'У вас проверили работу "{homework}"!\n\n'
                 'К сожалению в работе нашлись ошибки.',
     'reviewing': 'Работа {homework} взята в ревью',
@@ -39,26 +39,31 @@ UNEXPECTED_STATUS = (
 )
 ERROR_MESSAGE = (
     'При запросе данных бот столкнулся с ошибкой: "{error}".'
-    '\nПараметры запроса: {data}'
+    '\nПараметры запроса:'
+    '\n{url}'
+    '\n{headers}'
+    '\n{params}'
 )
 SERVER_REFUSAL_MESSAGE = (
-    'Отказ от выполнения работы сервера. '
+    'Отказ от выполнения работы сервера нана. '
     'Причина отказа сервера: "{reason}"'
-    '\nПараметры запроса: {data}'
+    '\nПараметры запроса:'
+    '\n {url}'
+    '\n {headers}'
+    '\n{params}'
 )
 MESSAGE_SENT = 'Отправлено следующее сообщение: \n <{message}>\n'
-BOT_ERROR_MESSAGE = ('Бот столкнулся с ошибкой: {error} \n'
-                     'От сервера получен следующий ответ: {data}')
+BOT_ERROR_MESSAGE = 'Бот столкнулся с ошибкой: {error} \n'
 
 
 def parse_homework_status(homework):
     homework_name = homework['homework_name']
     status = homework['status']
-    if status not in VERDICTS_DICT:
+    if status not in VERDICTS:
         raise ValueError(
             UNEXPECTED_STATUS.format(
                 status=status, homework=homework_name))
-    return VERDICTS_DICT[status].format(homework=homework_name)
+    return VERDICTS[status].format(homework=homework_name)
 
 
 def get_homework_statuses(current_timestamp):
@@ -68,14 +73,14 @@ def get_homework_statuses(current_timestamp):
         response = requests.get(**request_data)
     except requests.exceptions.RequestException as error:
         raise ConnectionError(
-            ERROR_MESSAGE.format(error=error, data=request_data)
+            ERROR_MESSAGE.format(error=error, **request_data)
         )
     data = response.json()
     for key in ['code', 'error']:
         if key in data:
             raise RuntimeError(
                 SERVER_REFUSAL_MESSAGE.format(
-                    reason=data[key], data=request_data))
+                    reason=data[key], **request_data))
     return data
 
 
@@ -88,8 +93,8 @@ def main():
     current_timestamp = int(time.time())
 
     while True:
-        new_homework = get_homework_statuses(current_timestamp)
         try:
+            new_homework = get_homework_statuses(current_timestamp)
             if new_homework.get("homeworks"):
                 message = parse_homework_status(
                     new_homework.get("homeworks")[0])
@@ -101,7 +106,7 @@ def main():
             time.sleep(300)
         except Exception as error:
             logger.error(BOT_ERROR_MESSAGE.format(
-                         error=error, data=new_homework), exc_info=True)
+                         error=error), exc_info=True)
             time.sleep(300)
 
 
@@ -115,7 +120,7 @@ if __name__ == '__main__':
     logging.getLogger('urlib3').setLevel(logging.WARNING)
     logging.getLogger('telegram').setLevel(logging.WARNING)
 
-    main()
+    # main()
 
     # # сбой сети
     # from unittest import TestCase, mock, main as uni_main # noqa
