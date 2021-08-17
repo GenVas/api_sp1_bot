@@ -14,7 +14,7 @@ PRAKTIKUM_TOKEN = os.getenv("PRAKTIKUM_TOKEN")
 HEADERS = {'Authorization': f'OAuth {PRAKTIKUM_TOKEN}'}
 TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
 CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
-HOMEWORK_URL = 'https://praktikum.yandex.ru/api/user_api/homework_statuses/'
+HOMEWORK_URL = 'https://practicum.yandex.ru/api/user_api/homework_statuses/'
 bot_client = telegram.Bot(token=TELEGRAM_TOKEN)
 
 # настройка логгера
