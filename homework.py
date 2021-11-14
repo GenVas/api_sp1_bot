@@ -45,7 +45,7 @@ ERROR_MESSAGE = (
     '\n{params}'
 )
 SERVER_REFUSAL_MESSAGE = (
-    'Отказ от выполнения работы сервера нана. '
+    'Отказ от выполнения работы сервера. '
     'Причина отказа сервера: "{reason}"'
     '\nПараметры запроса:'
     '\n {url}'
@@ -120,7 +120,7 @@ if __name__ == '__main__':
     logging.getLogger('urlib3').setLevel(logging.WARNING)
     logging.getLogger('telegram').setLevel(logging.WARNING)
 
-    # main()
+    main()
 
     # # сбой сети
     # from unittest import TestCase, mock, main as uni_main # noqa
